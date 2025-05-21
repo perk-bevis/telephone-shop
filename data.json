@@ -1,0 +1,53 @@
+[
+  {
+    "id":1,
+    "name": "Set đồ đi chơi",
+    "price": "$61.99",
+    "oldPrice": null,
+    "img": "./assest/img/img (3).webp",
+    "badges": ["<span class=\"badge bg-success ms-2\">Eco</span>"]
+  },
+  {
+     "id":2,
+    "name": "Set đồ công sở",
+    "price": "$75.00",
+    "oldPrice": null,
+    "img": "./assest/img/img (4).webp",
+    "badges": ["<span class=\"badge bg-warning ms-2\">New</span>"]
+  },
+  {
+     "id":3,
+    "name": "Giày Nkie hồng",
+    "price": "$50.99",
+    "oldPrice": "$61.99",
+    "img": "./assest/img/img (17).webp",
+    "badges": ["<span class=\"badge bg-danger ms-2\">-10%</span>"]
+  },
+  {
+     "id":4,
+    "name": "Giày Nike",
+    "price": "$50.99",
+    "oldPrice": "$61.99",
+    "img": "./assest/img/img (23).webp",
+    "badges": [
+      "<span class=\"badge bg-success ms-2\">Eco</span>",
+      "<span class=\"badge bg-danger ms-2\">-10%</span>"
+    ]
+  },
+  {
+     "id":5,
+    "name": "Quần zin",
+    "price": "$61.99",
+    "oldPrice": null,
+    "img": "./assest/img/img (3).webp",
+    "badges": []
+  },
+  {
+     "id":6,
+    "name": "Mũ da",
+    "price": "$50.99",
+    "oldPrice": "$61.99",
+    "img": "https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/img%20(30).webp",
+    "badges": ["<span class=\"badge bg-primary ms-2\">New</span>"]
+  }
+]
