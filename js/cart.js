@@ -2,71 +2,16 @@ const container = document.querySelector(".product-list-container")
 
 const cartContainer = document.querySelector(".product-entry")
 
+const cartSumary = document.querySelector(".cart-sumary")
+
 let cart = JSON.parse(localStorage.getItem("cart")) || []
 
-// const renderCart = async () => {
-//     const response = await fetch('/../data.json')
-
-//     const data = await response.json()
-
-//     if (cart.length !== 0) {
-//         return (cartContainer.innerHTML = cart.map(itemCart => {
-//             console.log(itemCart)
-//             let search = data.find(itemData => String(itemData.id) === String(itemCart.id)) || []
-
-//             return `
-//            <div class="card rounded-3 mb-4 product-item"> 
-//                   <div class="card-body p-4">
-//                     <div
-//                       class="row d-flex justify-content-between align-items-center"
-//                     >
-//                       <div class="col-md-2 col-lg-2 col-xl-2">
-//                         <img
-//                           src="${search.img}"
-//                           class="img-fluid rounded-3"
-//                           alt="Iphone 15"
-//                         />
-//                       </div>
-//                       <div class="col-md-3 col-lg-3 col-xl-3">
-//                         <p class="lead fw-normal mb-2">${search.name}</p>
-//                       </div>
-//                       <div class="col-md-2 col-lg-2 col-xl-1 d-flex align-items-center justify-content-center">
-//                         <input
-//                           type="number"
-//                           class="form-control form-control-sm quantity-input-visual"
-//                           value="${itemCart.count}" 
-//                           aria-label="Quantity" 
-//                           min="1" data-index="${itemCart.id}"
-//                         />
-//                       </div>
-//                       <div class="col-md-2 col-lg-2 col-xl-2 text-end">
-//                         <h5 class="mb-0">${search.price}</h5>
-//                       </div>
-//                       <div class="col-md-2 col-lg-2 col-xl-2 text-end">
-//                         <h5 class="mb-0">${search.price * itemCart.count}</h5>
-//                       </div>
-//                       <div class="col-md-1 col-lg-1 col-xl-2 text-end">
-//                         <button type="button" class="btn btn-danger btn-sm">Remove</button>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//             `
-//         }).join("")
-//     )
-//     }
-// }
-
 const renderCart = async () => {
-    // Lưu ý đường dẫn tới data.json: '/../data.json' có thể không đúng trong mọi trường hợp.
-    // Nếu data.json cùng cấp với file HTML gốc, có thể dùng '/data.json' hoặc './data.json'.
-    // Nếu file HTML nằm trong thư mục con, '../data.json' (không có / ở đầu) có thể đúng.
     const response = await fetch('/../data.json'); // Hoặc đường dẫn chính xác tới file data.json của bạn
     const data = await response.json();
 
     if (cart.length !== 0) {
         // cartContainer.innerHTML sẽ đưa tất cả HTML sản phẩm vào bên trong div class="product-entry" duy nhất.
-        // Điều này đúng với cấu trúc HTML hiện tại của bạn.
         cartContainer.innerHTML = cart.map(itemCart => {
 
             // So sánh ID dưới dạng chuỗi để đảm bảo tính nhất quán
@@ -89,9 +34,9 @@ const renderCart = async () => {
             } else {
                 console.error('Lỗi tính tổng tiền: unitPrice hoặc quantity không phải là số hợp lệ.',
                     {
-                        giaGoc: search.price, 
+                        giaGoc: search.price,
                         giaDaXuLy: unitPrice,
-                        soLuongTrongCart: itemCart.count, 
+                        soLuongTrongCart: itemCart.count,
                         soLuongDaXuLy: quantity
                     });
             }
@@ -116,7 +61,7 @@ const renderCart = async () => {
                         </div>
                         <div class="col-md-2 col-lg-2 col-xl-1 d-flex align-items-center justify-content-center">
                             <input
-                                onchange "update(${String(search.id)})"
+                                onchange = "update(${(search.id)})"
                                 type="number"
                                 class="form-control form-control-sm quantity-input-visual"
                                 value="${quantity}"
@@ -130,7 +75,7 @@ const renderCart = async () => {
                             <h5 class="mb-0">${displayLineTotal}</h5>
                         </div>
                         <div class="col-md-1 col-lg-1 col-xl-2 text-end">
-                            <button type="button" class="btn btn-danger btn-sm" onclick="removeFromCart('${String(itemCart.id)}')">Xóa</button> </div>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeItem('${String(search.id)}')">remove</button> </div>
                     </div>
                 </div>
             </div>
@@ -141,57 +86,130 @@ const renderCart = async () => {
         cartContainer.innerHTML = '<div class="text-center p-4"><p>Giỏ hàng của bạn đang trống.</p></div>';
     }
 };
+let update = (productId) => { // Đổi tên tham số thành productId cho rõ ràng
+    if (cart.length !== 0) {
+        // Tìm sản phẩm trong mảng 'cart' (giỏ hàng của bạn)
+        let searchIndex = cart.findIndex(itemInCart => String(itemInCart.id) === String(productId));
 
+        if (searchIndex !== -1) { // Nếu tìm thấy sản phẩm trong giỏ hàng
+            // Lấy phần tử input bằng ID (ID này được gán trong renderCart)
+            let quantityElement = document.getElementById(String(productId));
 
-// let update = (id) => {
-//     if(cart.length !== 0){
-//         let searchIndex = data.findIndex(itemCart => itemCart.id === id);
-//         if(searchIndex !== -1){
-//             let quantityElement = document.querySelector(id)
-//             if(quantityElement){
-//                 cart[searchIndex].count = parseInt(quantityElement.value, 10) || 0;
+            if (quantityElement) {
+                let newQuantity = parseInt(quantityElement.value, 10);
 
-//                 localStorage.setItem("cart", JSON.stringify(cart))
+                // Kiểm tra số lượng mới có hợp lệ không (là số và >= 1)
+                if (!isNaN(newQuantity) && newQuantity >= 1) {
+                    cart[searchIndex].count = newQuantity;
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    renderCart(); // Gọi lại renderCart để cập nhật giao diện
 
-//                 renderCart()
-//             }
-//         }
-//     }
-// }
-let update = (productId) => {
-    console.log(`[update] Bắt đầu hàm update với productId: ${productId}`);
-    if (cart.length === 0) {
-        console.log('[update] Giỏ hàng rỗng, không làm gì.');
-        return;
-    }
-
-    const cartItemIndex = cart.findIndex(itemInCart => String(itemInCart.id) === String(productId));
-    console.log(`[update] cartItemIndex tìm thấy: ${cartItemIndex}`);
-
-    if (cartItemIndex !== -1) {
-        console.log(`[update] Sản phẩm hiện tại trong giỏ hàng:`, JSON.parse(JSON.stringify(cart[cartItemIndex])));
-        const quantityElement = document.getElementById(String(productId));
-
-        if (quantityElement) {
-            const newQuantity = parseInt(quantityElement.value, 10);
-            console.log(`[update] Số lượng mới từ input: ${newQuantity}`);
-
-            if (!isNaN(newQuantity) && newQuantity >= 1) {
-                cart[cartItemIndex].count = newQuantity;
-                console.log(`[update] Số lượng sản phẩm trong cart đã cập nhật: ${cart[cartItemIndex].count}`);
-                localStorage.setItem("cart", JSON.stringify(cart));
-                console.log(`[update] localStorage đã cập nhật. Giỏ hàng hiện tại:`, JSON.parse(JSON.stringify(cart)));
-                console.log(`[update] Đang gọi renderCart()...`);
-                renderCart();
+                    totalProduct()
+                } else {
+                    // Nếu số lượng không hợp lệ, đặt lại giá trị input về giá trị cũ trong giỏ hàng
+                    quantityElement.value = cart[searchIndex].count;
+                    console.warn("Số lượng nhập vào không hợp lệ, đã khôi phục số lượng cũ.");
+                }
             } else {
-                quantityElement.value = cart[cartItemIndex].count; // Đặt lại nếu không hợp lệ
-                console.warn(`[update] Số lượng không hợp lệ: ${newQuantity}. Đã đặt lại input.`);
+                console.error("Không tìm thấy phần tử input số lượng cho ID:", productId);
             }
         } else {
-            console.error(`[update] Không tìm thấy quantityElement cho ID: ${productId}`);
+            console.error("Không tìm thấy sản phẩm với ID:", productId, "trong giỏ hàng.");
         }
-    } else {
-        console.error(`[update] Không tìm thấy sản phẩm với ID ${productId} trong giỏ hàng.`);
     }
 };
-renderCart()
+let totalProduct = async () => {
+    let response;
+    let data;
+
+    try {
+        response = await fetch("../data.json"); // Đảm bảo đường dẫn này đúng
+        if (!response.ok) {
+            // Nếu lỗi HTTP (ví dụ 404 Not Found), báo lỗi và thoát
+            console.error(`Lỗi HTTP khi tải data.json: ${response.status}`);
+            cartSumary.innerHTML = `<div class="text-danger p-4">Lỗi tải dữ liệu sản phẩm (HTTP ${response.status}).</div>`;
+            return;
+        }
+        data = await response.json();
+    } catch (error) {
+        // Nếu có lỗi mạng hoặc lỗi parse JSON
+        console.error("Không thể tải hoặc parse data.json trong totalProduct:", error);
+        cartSumary.innerHTML = `<div class="text-danger p-4">Không thể kết nối đến dữ liệu sản phẩm.</div>`;
+        return; // Thoát sớm nếu không tải được dữ liệu
+    }
+
+    if (cart.length !== 0) {
+        let totalAmount = 0; // Khởi tạo tổng tiền
+
+        for (const cartItem of cart) { // Duyệt qua từng sản phẩm trong giỏ hàng
+            const productData = data.find(itemData => String(itemData.id) === String(cartItem.id));
+
+            if (productData && typeof productData.price !== 'undefined') { // Kiểm tra sản phẩm có tồn tại và có giá không
+                let unitPrice;
+                // Xử lý giá tương tự như trong renderCart
+                if (typeof productData.price === 'string') {
+                    unitPrice = parseFloat(productData.price.replace(/[^0-9.]+/g, ""));
+                } else {
+                    unitPrice = parseFloat(productData.price);
+                }
+
+                const quantity = parseInt(cartItem.count, 10);
+
+                if (!isNaN(unitPrice) && !isNaN(quantity) && quantity > 0) {
+                    totalAmount += unitPrice * quantity;
+                } else {
+                    console.warn('Sản phẩm trong giỏ hàng có giá hoặc số lượng không hợp lệ:', {
+                        cartItemId: cartItem.id,
+                        priceFromData: productData.price,
+                        parsedUnitPrice: unitPrice,
+                        quantityInCart: cartItem.count,
+                        parsedQuantity: quantity
+                    });
+                }
+            } else {
+                console.warn(`Không tìm thấy thông tin sản phẩm hoặc giá cho ID: ${cartItem.id} trong data.json khi tính tổng.`);
+            }
+        }
+
+        // Định dạng tổng tiền để hiển thị (ví dụ: $123.45)
+        const displayTotalAmount = `$${totalAmount.toFixed(2)}`;
+
+        cartSumary.innerHTML = `
+        <div class="cart-sumary card mb-4">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 col-md-6 mb-3 mb-md-0">
+                        <h5 class="mb-0">Total Product: ${displayTotalAmount}</h5>
+                    </div>
+                    <div class="col-lg-5 col-md-6">
+                        <button type="button" class="btn btn-success d-block w-100 mb-2">
+                            Checkout
+                        </button>
+                        <button type="button" class="btn btn-danger d-block w-100" onclick="clearCart()">
+                            Clear Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    } else {
+        cartSumary.innerHTML = '<div class="text-center p-4"><p>Giỏ hàng của bạn đang trống. Tổng tiền sẽ hiển thị ở đây.</p></div>';
+    }
+};
+
+let removeItem = ((id) => {
+    let removeId = id;
+    cart = cart.filter((item) => String(item.id) !== String(removeId))
+    renderCart();
+    totalProduct();
+    localStorage.setItem("cart",JSON.stringify(cart))
+})
+
+let clearCart = (()=>{
+    cart = []
+    renderCart()
+    localStorage.setItem("cart",JSON.stringify(cart))
+})
+renderCart();
+totalProduct();
